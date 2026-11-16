@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "Docs Search",
+    "version": "1.0",
+    "description": "Search headings and links on the docs page you have open.",
+    "content_scripts": [
+        {
+            "matches": [
+                "https://developer.mozilla.org/*",
+                "https://www.w3schools.com/*"
+            ],
+            "js": ["content.js"]
+        }
+    ]
+}
