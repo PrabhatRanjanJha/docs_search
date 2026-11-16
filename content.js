@@ -10,6 +10,14 @@ function buildIndex() {
         index.push({"type": "heading", "text": h.textContent.trim(), "element": h})
     })
 
+    const links = document.querySelectorAll(".left-sidebar__content a")
+
+    links.forEach(link => {
+        if (!link.textContent?.trim()) {return;}
+
+        index.push({"type": "link", "text": link.textContent.trim(), "href": link.href})
+    })
+
     return index;
 }
 
