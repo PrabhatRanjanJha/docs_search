@@ -1,3 +1,9 @@
+//Variables
+let currentIndex = [];
+let currentMatches = [];
+let selectedIndex = 0;
+
+
 function buildIndex() {
     const index = [];
 
@@ -36,9 +42,6 @@ function buildIndex() {
     return index;
 }
 
-
-//Variables
-let currentIndex = [];
 
 // Create the extension container
 const host = document.createElement("div");
@@ -102,7 +105,7 @@ function renderResults(matches) {
         return;
     }
 
-    matches.forEach(item => {
+    matches.forEach((item, position) => {
         const row = document.createElement("div");
 
         const label = item.type === "heading" ? "On this page" : "Opens new page";
@@ -114,33 +117,11 @@ function renderResults(matches) {
         row.style.cursor = "pointer";
         row.style.padding = "5px";
 
-        row.addEventListener("click", () => {
-            if (item.type === "heading") {
-                const oldB = item.element.style.backgroundColor;
-                const oldT = item.element.style.color;
+        row.addEventListener("click", () => {openEle(item)});
 
-                item.element.style.transition = "background-color 0.5s ease, color 0.5s ease";
-
-                item.element.style.scrollMarginTop = "100px";
-
-                item.element.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-                
-                item.element.style.backgroundColor = "lightyellow";
-                item.element.style.color = "black";
-
-                setTimeout(()=> {
-                    item.element.style.backgroundColor = oldB;
-                    item.element.style.color = oldT;
-                }, 1500)
-
-            } else {
-                window.location.href = item.href;
-            }
-
-        });
+        if (position === selectedIndex) {
+            row.style.backgroundColor = "#e0e7ff";   // light blue
+        }
 
         results.appendChild(row);
     });
@@ -152,12 +133,64 @@ inputEle.addEventListener("input", ()=>{
 
     if (!query) {
         results.textContent = "";
+        currentMatches = [];
+        selectedIndex = 0;
         return;
     }
 
     const matches = currentIndex.filter(item => item.text.toLowerCase().includes(query)).slice(0, 8);
+    currentMatches = matches;
+    selectedIndex = 0;
 
-    renderResults(matches);
-
-        
+    inputEle.focus();
+    return renderResults(currentMatches);
 })
+
+inputEle.addEventListener("keydown", (e)=>{
+    if (e.key === "ArrowDown") {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, currentMatches.length-1);
+        return renderResults(currentMatches);
+    }     
+
+    if (e.key === "ArrowUp") {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        return renderResults(currentMatches);
+    }
+
+    if (e.key === "Enter") {
+        e.preventDefault();
+        if (currentMatches.length === 0) { return; }
+        return openEle(currentMatches[selectedIndex])
+    }
+})
+
+function openEle(item) {
+    if (item.type === "heading") {
+        const oldB = item.element.style.backgroundColor;
+        const oldT = item.element.style.color;
+
+        item.element.style.transition = "background-color 0.5s ease, color 0.5s ease";
+
+        item.element.style.scrollMarginTop = "100px";
+
+        item.element.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+        
+        item.element.style.backgroundColor = "lightyellow";
+        item.element.style.color = "black";
+
+        setTimeout(()=> {
+            item.element.style.backgroundColor = oldB;
+            item.element.style.color = oldT;
+            item.element.style.transition = "";
+        }, 1500)
+
+    } else {
+        window.location.href = item.href;
+    }
+
+}
