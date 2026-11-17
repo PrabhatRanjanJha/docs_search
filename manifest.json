@@ -9,7 +9,7 @@
                 "https://developer.mozilla.org/*",
                 "https://www.w3schools.com/*"
             ],
-            "js": ["content.js"]
+            "js": ["fuse.min.js", "content.js"]
         }
     ]
 }

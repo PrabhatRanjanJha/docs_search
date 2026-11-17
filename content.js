@@ -3,6 +3,8 @@ let currentIndex = [];
 let currentMatches = [];
 let selectedIndex = 0;
 
+let fuse = null;
+
 
 function buildIndex() {
     const index = [];
@@ -87,7 +89,10 @@ document.addEventListener("keydown", (e) => {
         box.style.display = "flex";
         inputEle.focus();
         currentIndex = buildIndex();
-
+        fuse = new Fuse(currentIndex, {
+            keys: ["text", "context"],
+            threshold: 0.4
+        })
         // console.log("shortcut pressed");
 
     } else if (e.key === "Escape") {
@@ -138,7 +143,7 @@ inputEle.addEventListener("input", ()=>{
         return;
     }
 
-    const matches = currentIndex.filter(item => item.text.toLowerCase().includes(query)).slice(0, 8);
+    const matches = fuse.search(query).slice(0, 8).map(r=> r.item)
     currentMatches = matches;
     selectedIndex = 0;
 
