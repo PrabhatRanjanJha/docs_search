@@ -5,8 +5,17 @@ const SITE_CONFIG = {
         scrollOffset: 100
     },
     "www.w3schools.com": {
-        sidebar: "",
-        ignore: "",
+        sidebar: "#leftmenuinnerinner a",
+        ignore: [
+            ".tutnav-wrap",
+            ".refnav-wrap",
+            ".exnav-main-heading",
+            ".certnav-wrap",
+            ".ws-cert-flex",
+            ".advb-inner",
+            ".ws-hide-on-logged-in",
+            "#err_message"
+        ].join(", "),
         scrollOffset: 100
     }
 };
