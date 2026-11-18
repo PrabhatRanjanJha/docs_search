@@ -1,3 +1,24 @@
+const SITE_CONFIG = {
+    "developer.mozilla.org": {
+        sidebar: ".left-sidebar__content a",
+        ignore: "aside, .article-footer__inner",
+        scrollOffset: 100
+    },
+    "www.w3schools.com": {
+        sidebar: "",
+        ignore: "",
+        scrollOffset: 100
+    }
+};
+
+const DEFAULT_CONFIG = {
+    sidebar: "nav a",
+    ignore: "nav, footer, header, aside",
+    scrollOffset: 80
+};
+
+const config = SITE_CONFIG[location.hostname] || DEFAULT_CONFIG;
+
 //Variables
 let currentIndex = [];
 let currentMatches = [];
@@ -12,7 +33,7 @@ function buildIndex() {
     const headings = document.querySelectorAll("h1, h2, h3, h4");
 
     headings.forEach(h => {
-        if (!!h.closest("aside, .article-footer__inner")) return;
+        if (!!h.closest(config.ignore)) return;
         if (!h.textContent?.trim()) return;
 
         index.push({
@@ -22,7 +43,7 @@ function buildIndex() {
         });
     });
 
-    const links = document.querySelectorAll(".left-sidebar__content a");
+    const links = document.querySelectorAll(config.sidebar);
 
     links.forEach(link => {
         const text = link.textContent.trim();
@@ -122,7 +143,12 @@ function renderResults(matches) {
         row.style.cursor = "pointer";
         row.style.padding = "5px";
 
-        row.addEventListener("click", () => {openEle(item)});
+        row.addEventListener("click", () => {
+            selectedIndex = position;
+            renderResults(currentMatches);
+            openEle(item);
+            inputEle.focus();
+        });
 
         if (position === selectedIndex) {
             row.style.backgroundColor = "#e0e7ff";   // light blue
@@ -178,7 +204,7 @@ function openEle(item) {
 
         item.element.style.transition = "background-color 0.5s ease, color 0.5s ease";
 
-        item.element.style.scrollMarginTop = "100px";
+        item.element.style.scrollMarginTop = `${config.scrollOffset}px`;
 
         item.element.scrollIntoView({
             behavior: "smooth",
